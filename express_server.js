@@ -73,7 +73,7 @@ app.get('/u/:id', (req, res) => {
 
 
 // Manage post requests for the Delete button
-app.get('/urls/:id/delete', (req, res) => {
+app.post('/urls/:id/delete', (req, res) => {
   delete urlDatabase[req.params.id];
   res.redirect('/urls');
 });
