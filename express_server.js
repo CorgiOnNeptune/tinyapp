@@ -21,27 +21,29 @@ const urlDatabase = {
 };
 
 app.get('/urls', (req, res) => {
+  console.log('urlDatabase:\n', urlDatabase);
   const templateVars = { urls: urlDatabase };
   res.render('urls_index', templateVars);
+});
+
+
+// Create new tiny URL
+app.post('/urls', (req, res) => {
+  const longURL = req.body.longURL;
+  const id = generateRandomString();
+  
+  // Add the new url to the urlDatabase
+  urlDatabase[id] = longURL;
+  
+  res.redirect(`/urls/${id}`);
 });
 
 app.get('/urls/new', (req, res) => {
   res.render('urls_new');
 });
 
-app.post("/urls", (req, res) => {
-  console.log(req.body); // Log the POST request body to the console
-  // res.send("Ok");
-  
-  // Add the new url to the urlDatabase
-  const longURL = req.body.longURL;
-  const id = generateRandomString();
-  
-  urlDatabase[id] = longURL;
-  
-  res.redirect(`/urls/${id}`);
-});
 
+// Take user to details page about their short URL
 app.get('/urls/:id', (req, res) => {
   const longURL = urlDatabase[req.params.id];
   const templateVars = { id: req.params.id, longURL: longURL };
@@ -55,7 +57,9 @@ app.get('/urls/:id', (req, res) => {
   res.render('urls_show', templateVars);
 });
 
-app.get("/u/:id", (req, res) => {
+
+// Take user to the longURL's page
+app.get('/u/:id', (req, res) => {
   const longURL = urlDatabase[req.params.id];
 
   if (longURL === undefined) {
@@ -67,17 +71,13 @@ app.get("/u/:id", (req, res) => {
   res.redirect(longURL);
 });
 
-app.get('/', (req, res) => {
-  res.send('Hello!');
+
+// Manage post requests for the Delete button
+app.get('/urls/:id/delete', (req, res) => {
+  delete urlDatabase[req.params.id];
+  res.redirect('/urls');
 });
 
-app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase);
-});
-
-app.get("/hello", (req, res) => {
-  res.send("<html><body>Hello <b>World</b></body></html>\n");
-});
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
