@@ -44,12 +44,26 @@ app.post("/urls", (req, res) => {
 
 app.get('/urls/:id', (req, res) => {
   const longURL = urlDatabase[req.params.id];
-  const templateVars = { id: req.params.id, longURL: longURL};
+  const templateVars = { id: req.params.id, longURL: longURL };
+
+  if (longURL === undefined) {
+    res.statusCode = 404;
+    res.send('<b>Error 404 - Link not valid</b>');
+    console.log('Invalid URL requested');
+  }
+  
   res.render('urls_show', templateVars);
 });
 
 app.get("/u/:id", (req, res) => {
   const longURL = urlDatabase[req.params.id];
+
+  if (longURL === undefined) {
+    res.statusCode = 404;
+    res.send('<b>Error 404 - Link not valid</b>');
+    console.log('Invalid URL requested');
+  }
+  
   res.redirect(longURL);
 });
 
