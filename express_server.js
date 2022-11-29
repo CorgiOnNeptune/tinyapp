@@ -5,6 +5,16 @@ const PORT = 8080;
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 
+const generateRandomString = () => {
+  const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0213456789';
+  let result = '';
+
+  for (let i = 0; i < 6; i++) {
+    result += chars.charAt(Math.random() * chars.length);
+  }
+  return result;
+};
+
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
