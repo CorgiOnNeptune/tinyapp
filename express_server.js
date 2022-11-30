@@ -80,8 +80,6 @@ app.post('/login', (req, res) => {
     return displayErrorMsg(res, res.statusCode, errMsg, '/login');
   }
 
-  console.log(`User: ${req.body.email} has logged in.`);
-
   res.cookie('user_id', userExists.id);
   res.redirect('/urls');
 });
@@ -99,8 +97,6 @@ app.get('/login', (req, res) => {
 });
 
 app.post('/logout', (req, res) => {
-  console.log(`User: ${req.cookies.user_id} has logged out.`);
-
   res.clearCookie('user_id');
   res.redirect('/login');
 });
@@ -138,7 +134,7 @@ app.post('/register', (req, res) => {
     return displayErrorMsg(res, res.statusCode, errMsg, '/register');
   }
   
-  console.log(`User ${newID} has registered successfully.`);
+  // Add new user to userDatabase
   userDatabase[newID] = { id: newID, email, password };
 
   res.cookie('user_id', newID);
@@ -219,21 +215,6 @@ app.get('/urls/:id', (req, res) => {
   res.render('urls_show', templateVars);
 });
 
-
-// Take user to the longURL's page
-app.get('/u/:id', (req, res) => {
-  const longURL = urlDatabase[req.params.id];
-
-  if (longURL === undefined) {
-    const errMsg = 'Invalid URL requested.';
-    res.statusCode = 404;
-
-    return displayErrorMsg(res, res.statusCode, errMsg, '/urls');
-  }
-
-  res.redirect(longURL);
-});
-
 // Manage POST requests for Edit button
 app.post('/urls/:id', (req, res) => {
   if (!getCurrentUserID(req)) {
@@ -249,8 +230,7 @@ app.post('/urls/:id', (req, res) => {
   res.redirect(`/urls`);
 });
 
-
-// Manage post requests for the Delete button
+// Manage POST requests for the Delete button
 app.post('/urls/delete/:id', (req, res) => {
   if (!getCurrentUserID(req)) {
     const errMsg = 'Non-registered user unable to delete URLs.';
@@ -261,6 +241,21 @@ app.post('/urls/delete/:id', (req, res) => {
 
   delete urlDatabase[req.params.id];
   res.redirect('/urls');
+});
+
+
+// Take anybody to the longURL's page
+app.get('/u/:id', (req, res) => {
+  const longURL = urlDatabase[req.params.id];
+
+  if (longURL === undefined) {
+    const errMsg = 'Invalid URL requested.';
+    res.statusCode = 404;
+
+    return displayErrorMsg(res, res.statusCode, errMsg, '/urls');
+  }
+
+  res.redirect(longURL);
 });
 
 
