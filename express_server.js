@@ -42,14 +42,6 @@ app.get('/urls/new', (req, res) => {
   res.render('urls_new');
 });
 
-// Manage POST requests for Edit button
-// app.get('/urls')
-
-app.post('/urls/edit/:id', (req, res) => {
-
-});
-
-
 
 // Take user to details page about their short URL
 app.get('/urls/:id', (req, res) => {
@@ -79,9 +71,19 @@ app.get('/u/:id', (req, res) => {
   res.redirect(longURL);
 });
 
+// Manage POST requests for Edit button
+app.post('/urls/:id', (req, res) => {
+  console.log('Edit has been submitted');
+
+  const newURL = req.body.newURL;
+  urlDatabase[req.params.id] = newURL;
+
+  res.redirect(`/urls`);
+});
+
 
 // Manage post requests for the Delete button
-app.post('/urls/:id/delete', (req, res) => {
+app.post('/urls/delete/:id', (req, res) => {
   delete urlDatabase[req.params.id];
   res.redirect('/urls');
 });

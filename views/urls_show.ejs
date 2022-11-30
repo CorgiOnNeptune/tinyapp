@@ -23,23 +23,22 @@
         </p>     
       </div>
       <div class="card-footer text-muted">
-        <form action="/urls" method="POST">
-          <div class="form-group mb-2">
-            <label for="edit-button">New URL:</label>
-            <input
-              type="text"
-              name="edit-button"
-              placeholder="http://"
-              style="width: 300px; margin: 1em;"
-              value="<%= longURL %>"
-            />
-            <button type="submit" value="Edit" class="btn btn-primary">Submit</button>
-          </div>
+        <h2>Edit</h2>
+          <form action="/urls/<%= id %>" method="POST">
+            <label for="newURL">New URL:</label>
+              <input
+                type="text"
+                name="newURL"
+                placeholder="http://"
+                style="width: 300px; margin: 1em;"
+                value="<%= longURL %>"
+              />
+              <button type="submit" value="Edit" class="btn btn-primary">Submit</button>
         </form>
       </div>
       <form 
           class="card-footer" 
-          action="/urls/<%= id %>/delete" 
+          action="/urls/delete/<%= id %>" 
           method="POST">
           <button type="submit" class="btn btn-danger">Delete</button>
         </form>
