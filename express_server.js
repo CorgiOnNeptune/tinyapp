@@ -39,6 +39,10 @@ app.get('/urls', (req, res) => {
 // Routes
 //
 
+app.post('/login', (req, res) => {
+  console.log('Login attempted');
+});
+
 // Create new tiny URL
 app.post('/urls', (req, res) => {
   const longURL = req.body.longURL;
