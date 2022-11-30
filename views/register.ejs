@@ -21,39 +21,39 @@
   <body>
     <%- include('partials/_header') %>
     
-  <main style="margin: 1em;">
-    <h3>Create Account</h3>
-    <form action="/register" method="POST">
-      <div class="form-group mb-2">
-        <label for="email">Email:</label>
-        <input
-          class="form-control"
-          type="email"
-          name="email"
-          placeholder="Email"
-          style="width: 300px; margin: 1em"
-        />
-        <label for="password">Password:</label>
-        <input
-          class="form-control"
-          type="password"
-          name="password"
-          placeholder="Password"
-          style="width: 300px; margin: 1em"
-        />
-        <label for="confirmPassword">Confirm Password:</label>
-        <input
-          class="form-control"
-          type="password"
-          name="confirmPassword"
-          placeholder="Confirm password"
-          style="width: 300px; margin: 1em"
-        />
-        <button type="submit" class="btn btn-primary">Create Account</button>
-      </div>
-      <a href="/login">Already registered? Login here.</a>
-    </form>
-  </main>
+    <main style="margin: 1em;">
+      <h3>Create Account</h3>
+      <form action="/register" method="POST">
+        <div class="form-group mb-2">
+          <label for="email">Email:</label>
+          <input
+            class="form-control"
+            type="email"
+            name="email"
+            placeholder="Email"
+            style="width: 300px; margin: 1em"
+          />
+          <label for="password">Password:</label>
+          <input
+            class="form-control"
+            type="password"
+            name="password"
+            placeholder="Password"
+            style="width: 300px; margin: 1em"
+          />
+          <label for="confirmPassword">Confirm Password:</label>
+          <input
+            class="form-control"
+            type="password"
+            name="confirmPassword"
+            placeholder="Confirm password"
+            style="width: 300px; margin: 1em"
+          />
+          <button type="submit" class="btn btn-primary">Create Account</button>
+        </div>
+        <a href="/login">Already registered? Login here.</a>
+      </form>
+    </main>
   
     <!-- Bootstrap JS -->
     <script

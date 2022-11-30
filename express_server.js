@@ -153,6 +153,10 @@ app.get('/urls', (req, res) => {
     urls: urlDatabase
   };
 
+  if (!getCurrentUserID(req)) {
+    return res.redirect('/login');
+  }
+
   res.render('urls_index', templateVars);
 });
 
@@ -161,6 +165,13 @@ app.get('/urls', (req, res) => {
 app.post('/urls', (req, res) => {
   const longURL = req.body.longURL;
   const id = generateRandomString();
+
+  if (!getCurrentUserID(req)) {
+    const errMsg = 'Non-registered user unable to shorten URLs.';
+    res.statusCode = 403;
+
+    return res.send(`Error ${res.statusCode}\n${errMsg}\n`);
+  }
 
   // Add the new url to the urlDatabase
   urlDatabase[id] = longURL;
@@ -193,6 +204,7 @@ app.get('/urls/:id', (req, res) => {
 
   if (longURL === undefined) {
     const errMsg = 'Invalid URL requested.';
+    res.statusCode = 404;
 
     displayError(res, res.statusCode, errMsg, '/urls');
   }
@@ -217,7 +229,12 @@ app.get('/u/:id', (req, res) => {
 
 // Manage POST requests for Edit button
 app.post('/urls/:id', (req, res) => {
-  console.log('Edit has been submitted');
+  if (!getCurrentUserID(req)) {
+    const errMsg = 'Non-registered user unable to edit URLs.';
+    res.statusCode = 403;
+
+    return res.send(`Error ${res.statusCode}\n${errMsg}\n`);
+  }
 
   const newURL = req.body.newURL;
   urlDatabase[req.params.id] = newURL;
@@ -228,6 +245,13 @@ app.post('/urls/:id', (req, res) => {
 
 // Manage post requests for the Delete button
 app.post('/urls/delete/:id', (req, res) => {
+  if (!getCurrentUserID(req)) {
+    const errMsg = 'Non-registered user unable to delete URLs.';
+    res.statusCode = 403;
+
+    return res.send(`Error ${res.statusCode}.\n${errMsg}\n`);
+  }
+
   delete urlDatabase[req.params.id];
   res.redirect('/urls');
 });
