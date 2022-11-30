@@ -21,6 +21,15 @@ const generateRandomString = () => {
   return result;
 };
 
+const getUserByEmail = (database, email) => {
+  for (const data in database) {
+    if (database[data].email === email) {
+      return database[data];
+    }
+  }
+  return null;
+};
+
 
 //
 // Data
@@ -50,7 +59,7 @@ const userDatabase = {
 
 app.post('/login', (req, res) => {
   console.log(`User: ${req.body.username} has logged in.`);
-  
+
   res.cookie('username', req.body.username);
   res.redirect('/urls');
 });
@@ -67,7 +76,7 @@ app.get('/register', (req, res) => {
   const templateVars = {
     currentUser,
   };
-  
+
   res.render('register', templateVars);
 });
 
@@ -75,19 +84,31 @@ app.post('/register', (req, res) => {
   const newID = generateRandomString();
   const email = req.body.email;
   const password = req.body.password;
-  
-  if (password === req.body.confirmPassword) {
-    console.log(`User ${newID} has registered.`);
 
-    userDatabase[newID] = { id: newID, email, password };
-    
-    res.cookie('user_id', newID);
-    res.redirect('/urls');
-  } else {
-    console.log(`Registration failed.`);
+  if (!email || !password || getUserByEmail(userDatabase, email)) {
+    let errMsg = getUserByEmail(userDatabase, email) ? `Email already in use.` : `Email or password entry not valid.`;
+    console.log(`Registration failed. ${errMsg}`);
 
-    res.redirect('/register');
+    res.statusCode = 400;
+    return res.send(`<b>Error ${res.statusCode} - ${errMsg}</b><br/>
+    <a href="/register">Try again</a>`);
   }
+
+  if (password !== req.body.confirmPassword) {
+    const errMsg = 'Passwords do not match.';
+    console.log(`Registration failed. ${errMsg}`);
+
+    res.statusCode = 403;
+    return res.send(`<b>Error ${res.statusCode} - ${errMsg}</b><br/>
+    <a href="/register">Try again</a>`);
+
+  }
+  console.log(`User ${newID} has registered successfully.`);
+  userDatabase[newID] = { id: newID, email, password };
+
+  res.cookie('user_id', newID);
+  res.redirect('/urls');
+
 });
 
 
@@ -106,10 +127,10 @@ app.get('/urls', (req, res) => {
 app.post('/urls', (req, res) => {
   const longURL = req.body.longURL;
   const id = generateRandomString();
-  
+
   // Add the new url to the urlDatabase
   urlDatabase[id] = longURL;
-  
+
   res.redirect(`/urls/${id}`);
 });
 
@@ -134,10 +155,10 @@ app.get('/urls/:id', (req, res) => {
 
   if (longURL === undefined) {
     res.statusCode = 404;
-    res.send('<b>Error 404 - Link not valid</b>');
+    res.send(`<b>Error ${res.statusCode} - Link not valid</b>`);
     console.log('Invalid URL requested');
   }
-  
+
   res.render('urls_show', templateVars);
 });
 
@@ -148,10 +169,10 @@ app.get('/u/:id', (req, res) => {
 
   if (longURL === undefined) {
     res.statusCode = 404;
-    res.send('<b>Error 404 - Link not valid</b>');
+    res.send(`<b>Error ${res.statusCode} - Link not valid</b>`);
     console.log('Invalid URL requested');
   }
-  
+
   res.redirect(longURL);
 });
 
