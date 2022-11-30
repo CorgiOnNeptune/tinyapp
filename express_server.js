@@ -30,6 +30,10 @@ const getUserByEmail = (database, email) => {
   return null;
 };
 
+const getCurrentUser = request => {
+  return userDatabase[request.cookies.user_id];
+};
+
 
 //
 // Data
@@ -56,7 +60,6 @@ const userDatabase = {
 //
 // Routes
 //
-
 app.post('/login', (req, res) => {
   console.log(`User: ${req.body.username} has logged in.`);
 
@@ -71,10 +74,18 @@ app.post('/logout', (req, res) => {
   res.redirect('/urls');
 });
 
-app.get('/register', (req, res) => {
-  const currentUser = userDatabase[req.cookies.user_id];
+app.get('/login', (req, res) => {
   const templateVars = {
-    currentUser,
+    currentUser: getCurrentUser(req),
+  };
+
+  res.render('login', templateVars);
+});
+
+// Registration requests
+app.get('/register', (req, res) => {
+  const templateVars = {
+    currentUser: getCurrentUser(req),
   };
 
   res.render('register', templateVars);
@@ -108,17 +119,15 @@ app.post('/register', (req, res) => {
 
   res.cookie('user_id', newID);
   res.redirect('/urls');
-
 });
 
 
 app.get('/urls', (req, res) => {
-  const currentUser = userDatabase[req.cookies.user_id];
-
   const templateVars = {
-    currentUser,
+    currentUser: getCurrentUser(req),
     urls: urlDatabase
   };
+
   res.render('urls_index', templateVars);
 });
 
@@ -135,9 +144,10 @@ app.post('/urls', (req, res) => {
 });
 
 app.get('/urls/new', (req, res) => {
-  const currentUser = userDatabase[req.cookies.user_id];
+  const templateVars = {
+    currentUser: getCurrentUser(req),
+  };
 
-  const templateVars = { currentUser };
   res.render('urls_new', templateVars);
 });
 
@@ -145,10 +155,9 @@ app.get('/urls/new', (req, res) => {
 // Take user to details page about their short URL
 app.get('/urls/:id', (req, res) => {
   const longURL = urlDatabase[req.params.id];
-  const currentUser = userDatabase[req.cookies.user_id];
-
+  
   const templateVars = {
-    currentUser,
+    currentUser: getCurrentUser(req),
     id: req.params.id,
     longURL: longURL
   };
