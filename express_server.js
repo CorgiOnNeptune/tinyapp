@@ -1,6 +1,11 @@
 const express = require('express');
+const cookieParser = require('cookie-parser');
 const app = express();
 const PORT = 8080;
+
+//
+// Middleware
+//
 
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
@@ -15,6 +20,10 @@ const generateRandomString = () => {
   return result;
 };
 
+//
+// Data
+//
+
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com",
@@ -26,6 +35,9 @@ app.get('/urls', (req, res) => {
   res.render('urls_index', templateVars);
 });
 
+//
+// Routes
+//
 
 // Create new tiny URL
 app.post('/urls', (req, res) => {
