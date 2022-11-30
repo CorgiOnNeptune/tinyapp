@@ -60,6 +60,8 @@ const userDatabase = {
 //
 // Routes
 //
+
+// Login Routes
 app.post('/login', (req, res) => {
   const inputEmail = req.body.email;
   const inputPassword = req.body.password;
@@ -67,6 +69,7 @@ app.post('/login', (req, res) => {
 
   if (!userExists || inputPassword !== userExists.password) {
     console.log('Invalid login parameters.');
+
     res.statusCode = 403;
     return res.send(`<b>Error ${res.statusCode} - Invalid login parameters.</b>
     <a href="/login">Try again.</a>`);
@@ -79,9 +82,14 @@ app.post('/login', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
+  const currentUser = getCurrentUserID(req);
   const templateVars = {
-    currentUser: getCurrentUserID(req),
+    currentUser
   };
+
+  if (currentUser && currentUser !== undefined) {
+    return res.redirect('/urls');
+  }
 
   res.render('login', templateVars);
 });
@@ -97,9 +105,14 @@ app.post('/logout', (req, res) => {
 
 // Registration requests
 app.get('/register', (req, res) => {
+  const currentUser = getCurrentUserID(req);
   const templateVars = {
-    currentUser: getCurrentUserID(req),
+    currentUser
   };
+
+  if (currentUser && currentUser !== undefined) {
+    return res.redirect('/urls');
+  }
 
   res.render('register', templateVars);
 });
@@ -125,8 +138,8 @@ app.post('/register', (req, res) => {
     res.statusCode = 403;
     return res.send(`<b>Error ${res.statusCode} - ${errMsg}</b><br/>
     <a href="/register">Try again</a>`);
-
   }
+  
   console.log(`User ${newID} has registered successfully.`);
   userDatabase[newID] = { id: newID, email, password };
 
