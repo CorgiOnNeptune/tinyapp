@@ -42,6 +42,14 @@ app.get('/urls/new', (req, res) => {
   res.render('urls_new');
 });
 
+// Manage POST requests for Edit button
+// app.get('/urls')
+
+app.post('/urls/edit/:id', (req, res) => {
+
+});
+
+
 
 // Take user to details page about their short URL
 app.get('/urls/:id', (req, res) => {
