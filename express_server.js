@@ -34,7 +34,7 @@ const getCurrentUserID = (request, database = userDatabase) => {
   return database[request.cookies.user_id];
 };
 
-const displayError = (res, status, errMsg, returnLink) => {
+const displayErrorMsg = (res, status, errMsg, returnLink) => {
   console.log(`Error ${status}: ${errMsg}`);
   return res.send(`<h3>Error ${status}</h3>
   <p>${errMsg}<br/><br/>
@@ -67,7 +67,7 @@ const userDatabase = {
 // Routes
 //
 
-// Login Routes
+// Login/logout request routes
 app.post('/login', (req, res) => {
   const inputEmail = req.body.email;
   const inputPassword = req.body.password;
@@ -77,7 +77,7 @@ app.post('/login', (req, res) => {
     const errMsg = 'Invalid login parameters.';
     res.statusCode = 403;
 
-    return displayError(res, res.statusCode, errMsg, '/login');
+    return displayErrorMsg(res, res.statusCode, errMsg, '/login');
   }
 
   console.log(`User: ${req.body.email} has logged in.`);
@@ -97,7 +97,6 @@ app.get('/login', (req, res) => {
   
   res.redirect('/urls');
 });
-
 
 app.post('/logout', (req, res) => {
   console.log(`User: ${req.cookies.user_id} has logged out.`);
@@ -129,14 +128,14 @@ app.post('/register', (req, res) => {
     let errMsg = getUserByEmail(email) ? `Email already in use.` : `Email or password entry not valid.`;
     res.statusCode = 400;
 
-    return displayError(res, res.statusCode, errMsg, '/register');
+    return displayErrorMsg(res, res.statusCode, errMsg, '/register');
   }
 
   if (password !== req.body.confirmPassword) {
     const errMsg = 'Passwords do not match.';
     res.statusCode = 403;
     
-    return displayError(res, res.statusCode, errMsg, '/register');
+    return displayErrorMsg(res, res.statusCode, errMsg, '/register');
   }
   
   console.log(`User ${newID} has registered successfully.`);
@@ -147,6 +146,7 @@ app.post('/register', (req, res) => {
 });
 
 
+// Show logged in user list of their urls
 app.get('/urls', (req, res) => {
   const templateVars = {
     currentUser: getCurrentUserID(req),
@@ -202,11 +202,18 @@ app.get('/urls/:id', (req, res) => {
     longURL: longURL
   };
 
+  if (!getCurrentUserID(req)) {
+    const errMsg = 'Non-registered user unable to edit URLs.';
+    res.statusCode = 403;
+
+    return displayErrorMsg(res, res.statusCode, errMsg, '/login');
+  }
+
   if (longURL === undefined) {
     const errMsg = 'Invalid URL requested.';
     res.statusCode = 404;
 
-    displayError(res, res.statusCode, errMsg, '/urls');
+    return displayErrorMsg(res, res.statusCode, errMsg, '/urls');
   }
 
   res.render('urls_show', templateVars);
@@ -221,7 +228,7 @@ app.get('/u/:id', (req, res) => {
     const errMsg = 'Invalid URL requested.';
     res.statusCode = 404;
 
-    displayError(res, res.statusCode, errMsg, '/urls');
+    return displayErrorMsg(res, res.statusCode, errMsg, '/urls');
   }
 
   res.redirect(longURL);
@@ -233,7 +240,7 @@ app.post('/urls/:id', (req, res) => {
     const errMsg = 'Non-registered user unable to edit URLs.';
     res.statusCode = 403;
 
-    return res.send(`Error ${res.statusCode}\n${errMsg}\n`);
+    return displayErrorMsg(res, res.statusCode, errMsg, '/login');
   }
 
   const newURL = req.body.newURL;
@@ -249,7 +256,7 @@ app.post('/urls/delete/:id', (req, res) => {
     const errMsg = 'Non-registered user unable to delete URLs.';
     res.statusCode = 403;
 
-    return res.send(`Error ${res.statusCode}.\n${errMsg}\n`);
+    return displayErrorMsg(res, res.statusCode, errMsg, '/login');
   }
 
   delete urlDatabase[req.params.id];
