@@ -13,7 +13,7 @@
 
   <body>
     <%- include('partials/_header'); %>
-    
+
     <div class="card text-center">
       <div class="card-header"></div>
       <div class="card-body">
@@ -23,25 +23,25 @@
         </p>     
       </div>
       <div class="card-footer text-muted">
-        <h2>Edit</h2>
+        <h2>Edit URL</h2>
           <form action="/urls/<%= id %>" method="POST">
             <label for="newURL">New URL:</label>
               <input
-                class="form-control form-rounded"
+                class="form-control"
                 type="text"
                 name="newURL"
                 placeholder="http://"
                 style="width: 20%; margin:10px auto;"
                 value="<%= longURL %>"
               />
-              <button type="submit" value="Edit" class="btn btn-primary">Submit</button>
+              <button type="submit" value="Edit" class="btn  btn-primary">Submit</button>
           </form>
       </div>
       <form 
           class="card-footer" 
           action="/urls/delete/<%= id %>" 
           method="POST">
-          <button type="submit" class="btn btn-danger">Delete</button>
+          <button type="submit" class="btn btn-danger">Delete URL</button>
         </form>
     </div>
     <!-- Bootstrap JS -->
