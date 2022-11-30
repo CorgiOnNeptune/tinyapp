@@ -36,9 +36,16 @@ const urlDatabase = {
 //
 
 app.post('/login', (req, res) => {
-  console.log('Login attempted');
-
+  console.log(`User: ${req.body.username} has logged in.`);
+  
   res.cookie('username', req.body.username);
+  res.redirect('/urls');
+});
+
+app.post('/logout', (req, res) => {
+  console.log(`User: ${req.cookies.username} has logged out.`);
+
+  res.clearCookie('username');
   res.redirect('/urls');
 });
 
