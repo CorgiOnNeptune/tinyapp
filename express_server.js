@@ -63,13 +63,13 @@ const userDatabase = {
 app.post('/login', (req, res) => {
   const inputEmail = req.body.email;
   const inputPassword = req.body.password;
-
   const userExists = getUserByEmail(inputEmail);
 
   if (!userExists || inputPassword !== userExists.password) {
     console.log('Invalid login parameters.');
-    res.statusCode = 401;
-    return res.redirect('/login');
+    res.statusCode = 403;
+    return res.send(`<b>Error ${res.statusCode} - Invalid login parameters.</b>
+    <a href="/login">Try again.</a>`);
   }
 
   console.log(`User: ${req.body.email} has logged in.`);
