@@ -16,24 +16,26 @@
       <div class="navbar-nav">
         <a class="nav-item nav-link align-self-center" href="/urls">My URLs</a>
         <a class="nav-item nav-link align-self-center" href="/urls/new">Create New URL</a>
-          <% if (!username) { %>
-            <form class="form-inline" action="/login" method="POST">
-              <input
-                class="form-control"
-                type="text"
-                name="username"
-                placeholder="Username"
-                style="margin: 5px;"
-              />
-              <button type="submit" class="btn btn-outline-dark">Login</button>
-            </form>
-          <% } else { %>
-            <form class ="form-inline" action="/logout" method="POST">
-            <p style="margin:auto; padding: 10px;">Hello, <%= username %>!</p>
-              <button type="submit" class="btn btn-outline-dark btn-sm">Logout</button>
-          </form>
-          <% } %>
       </div>
+    </div>
+    <div class="nav navbar-nav navbar-right">
+      <% if (!username) { %>
+        <form class="form-inline" action="/login" method="POST">
+          <input
+            class="form-control"
+            type="text"
+            name="username"
+            placeholder="Username"
+            style="margin: 5px; padding: 10px;"
+          />
+          <button type="submit" class="btn btn-outline-dark">Login</button>
+        </form>
+      <% } else { %>
+        <form class ="form-inline" action="/logout" method="POST">
+        <p style="margin:auto; padding: 10px;">Hello, <%= username %>!</p>
+          <button type="submit" class="btn btn-outline-dark">Logout</button>
+      </form>
+      <% } %>
     </div>
   </nav>
 </header>
