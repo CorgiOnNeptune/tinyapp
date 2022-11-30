@@ -9,6 +9,7 @@ const PORT = 8080;
 
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 const generateRandomString = () => {
   const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0213456789';
@@ -20,6 +21,7 @@ const generateRandomString = () => {
   return result;
 };
 
+
 //
 // Data
 //
@@ -29,19 +31,26 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com",
 };
 
-app.get('/urls', (req, res) => {
-  console.log('urlDatabase:\n', urlDatabase);
-  const templateVars = { urls: urlDatabase };
-  res.render('urls_index', templateVars);
-});
-
 //
 // Routes
 //
 
 app.post('/login', (req, res) => {
   console.log('Login attempted');
+
+  res.cookie('username', req.body.username);
+  res.redirect('/urls');
 });
+
+app.get('/urls', (req, res) => {
+  // console.log('urlDatabase:\n', urlDatabase);
+  const templateVars = {
+    username: req.cookies.username,
+    urls: urlDatabase
+  };
+  res.render('urls_index', templateVars);
+});
+
 
 // Create new tiny URL
 app.post('/urls', (req, res) => {
@@ -55,14 +64,19 @@ app.post('/urls', (req, res) => {
 });
 
 app.get('/urls/new', (req, res) => {
-  res.render('urls_new');
+  const templateVars = { username: req.cookies['username'] };
+  res.render('urls_new', templateVars);
 });
 
 
 // Take user to details page about their short URL
 app.get('/urls/:id', (req, res) => {
   const longURL = urlDatabase[req.params.id];
-  const templateVars = { id: req.params.id, longURL: longURL };
+  const templateVars = {
+    username: req.cookies['username'],
+    id: req.params.id,
+    longURL: longURL
+  };
 
   if (longURL === undefined) {
     res.statusCode = 404;
