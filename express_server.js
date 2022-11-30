@@ -21,7 +21,7 @@ const generateRandomString = () => {
   return result;
 };
 
-const getUserByEmail = (database, email) => {
+const getUserByEmail = (email, database = userDatabase) => {
   for (const data in database) {
     if (database[data].email === email) {
       return database[data];
@@ -30,8 +30,8 @@ const getUserByEmail = (database, email) => {
   return null;
 };
 
-const getCurrentUser = request => {
-  return userDatabase[request.cookies.user_id];
+const getCurrentUserID = (request, database = userDatabase) => {
+  return database[request.cookies.user_id];
 };
 
 
@@ -61,31 +61,44 @@ const userDatabase = {
 // Routes
 //
 app.post('/login', (req, res) => {
-  console.log(`User: ${req.body.username} has logged in.`);
+  const inputEmail = req.body.email;
+  const inputPassword = req.body.password;
 
-  res.cookie('username', req.body.username);
-  res.redirect('/urls');
-});
+  const userExists = getUserByEmail(inputEmail);
 
-app.post('/logout', (req, res) => {
-  console.log(`User: ${req.cookies.user_id} has logged out.`);
+  if (!userExists || inputPassword !== userExists.password) {
+    console.log('Invalid login parameters.');
+    res.statusCode = 401;
+    return res.redirect('/login');
+  }
 
-  res.clearCookie('user_id');
+  console.log(`User: ${req.body.email} has logged in.`);
+
+  res.cookie('user_id', userExists.id);
   res.redirect('/urls');
 });
 
 app.get('/login', (req, res) => {
   const templateVars = {
-    currentUser: getCurrentUser(req),
+    currentUser: getCurrentUserID(req),
   };
 
   res.render('login', templateVars);
 });
 
+
+app.post('/logout', (req, res) => {
+  console.log(`User: ${req.cookies.user_id} has logged out.`);
+
+  res.clearCookie('user_id');
+  res.redirect('/login');
+});
+
+
 // Registration requests
 app.get('/register', (req, res) => {
   const templateVars = {
-    currentUser: getCurrentUser(req),
+    currentUser: getCurrentUserID(req),
   };
 
   res.render('register', templateVars);
@@ -96,8 +109,8 @@ app.post('/register', (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
 
-  if (!email || !password || getUserByEmail(userDatabase, email)) {
-    let errMsg = getUserByEmail(userDatabase, email) ? `Email already in use.` : `Email or password entry not valid.`;
+  if (!email || !password || getUserByEmail(email)) {
+    let errMsg = getUserByEmail(email) ? `Email already in use.` : `Email or password entry not valid.`;
     console.log(`Registration failed. ${errMsg}`);
 
     res.statusCode = 400;
@@ -124,7 +137,7 @@ app.post('/register', (req, res) => {
 
 app.get('/urls', (req, res) => {
   const templateVars = {
-    currentUser: getCurrentUser(req),
+    currentUser: getCurrentUserID(req),
     urls: urlDatabase
   };
 
@@ -145,7 +158,7 @@ app.post('/urls', (req, res) => {
 
 app.get('/urls/new', (req, res) => {
   const templateVars = {
-    currentUser: getCurrentUser(req),
+    currentUser: getCurrentUserID(req),
   };
 
   res.render('urls_new', templateVars);
@@ -157,7 +170,7 @@ app.get('/urls/:id', (req, res) => {
   const longURL = urlDatabase[req.params.id];
   
   const templateVars = {
-    currentUser: getCurrentUser(req),
+    currentUser: getCurrentUserID(req),
     id: req.params.id,
     longURL: longURL
   };
