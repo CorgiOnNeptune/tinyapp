@@ -34,6 +34,12 @@ const getCurrentUserID = (request, database = userDatabase) => {
   return database[request.cookies.user_id];
 };
 
+const displayError = (res, status, errMsg, returnLink) => {
+  console.log(`Error ${status}: ${errMsg}`);
+  return res.send(`<h3>Error ${status}</h3>
+  <p>${errMsg}<br/><br/>
+  <b><a href="${returnLink}">Try again</a></b></p>`);
+};
 
 //
 // Data
@@ -68,11 +74,10 @@ app.post('/login', (req, res) => {
   const userExists = getUserByEmail(inputEmail);
 
   if (!userExists || inputPassword !== userExists.password) {
-    console.log('Invalid login parameters.');
-
+    const errMsg = 'Invalid login parameters.';
     res.statusCode = 403;
-    return res.send(`<b>Error ${res.statusCode} - Invalid login parameters.</b>
-    <a href="/login">Try again.</a>`);
+
+    return displayError(res, res.statusCode, errMsg, '/login');
   }
 
   console.log(`User: ${req.body.email} has logged in.`);
@@ -82,16 +87,15 @@ app.post('/login', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-  const currentUser = getCurrentUserID(req);
   const templateVars = {
-    currentUser
+    currentUser: getCurrentUserID(req)
   };
 
-  if (currentUser && currentUser !== undefined) {
-    return res.redirect('/urls');
+  if (!getCurrentUserID(req)) {
+    return res.render('login', templateVars);
   }
-
-  res.render('login', templateVars);
+  
+  res.redirect('/urls');
 });
 
 
@@ -105,16 +109,15 @@ app.post('/logout', (req, res) => {
 
 // Registration requests
 app.get('/register', (req, res) => {
-  const currentUser = getCurrentUserID(req);
   const templateVars = {
-    currentUser
+    currentUser: getCurrentUserID(req)
   };
 
-  if (currentUser && currentUser !== undefined) {
-    return res.redirect('/urls');
+  if (!getCurrentUserID(req)) {
+    return res.render('register', templateVars);
   }
-
-  res.render('register', templateVars);
+  
+  res.redirect('/urls');
 });
 
 app.post('/register', (req, res) => {
@@ -124,20 +127,16 @@ app.post('/register', (req, res) => {
 
   if (!email || !password || getUserByEmail(email)) {
     let errMsg = getUserByEmail(email) ? `Email already in use.` : `Email or password entry not valid.`;
-    console.log(`Registration failed. ${errMsg}`);
-
     res.statusCode = 400;
-    return res.send(`<b>Error ${res.statusCode} - ${errMsg}</b><br/>
-    <a href="/register">Try again</a>`);
+
+    return displayError(res, res.statusCode, errMsg, '/register');
   }
 
   if (password !== req.body.confirmPassword) {
     const errMsg = 'Passwords do not match.';
-    console.log(`Registration failed. ${errMsg}`);
-
     res.statusCode = 403;
-    return res.send(`<b>Error ${res.statusCode} - ${errMsg}</b><br/>
-    <a href="/register">Try again</a>`);
+    
+    return displayError(res, res.statusCode, errMsg, '/register');
   }
   
   console.log(`User ${newID} has registered successfully.`);
@@ -174,6 +173,10 @@ app.get('/urls/new', (req, res) => {
     currentUser: getCurrentUserID(req),
   };
 
+  if (!getCurrentUserID(req)) {
+    return res.redirect('/login');
+  }
+
   res.render('urls_new', templateVars);
 });
 
@@ -189,9 +192,9 @@ app.get('/urls/:id', (req, res) => {
   };
 
   if (longURL === undefined) {
-    res.statusCode = 404;
-    res.send(`<b>Error ${res.statusCode} - Link not valid</b>`);
-    console.log('Invalid URL requested');
+    const errMsg = 'Invalid URL requested.';
+
+    displayError(res, res.statusCode, errMsg, '/urls');
   }
 
   res.render('urls_show', templateVars);
@@ -203,9 +206,10 @@ app.get('/u/:id', (req, res) => {
   const longURL = urlDatabase[req.params.id];
 
   if (longURL === undefined) {
+    const errMsg = 'Invalid URL requested.';
     res.statusCode = 404;
-    res.send(`<b>Error ${res.statusCode} - Link not valid</b>`);
-    console.log('Invalid URL requested');
+
+    displayError(res, res.statusCode, errMsg, '/urls');
   }
 
   res.redirect(longURL);
