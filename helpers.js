@@ -20,7 +20,7 @@ const getUserByEmail = (email, database = userDatabase) => {
 };
 
 const getCurrentUserID = (req, database = userDatabase) => {
-  return database[req.cookies.user_id];
+  return database[req.session.userID];
 };
 
 const displayErrorMsg = (res, status, errMsg, returnLink) => {

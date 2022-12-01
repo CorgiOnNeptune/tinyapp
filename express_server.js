@@ -1,5 +1,5 @@
 const express = require('express');
-const cookieParser = require('cookie-parser');
+const cookieSession = require('cookie-session');
 const bcrypt = require('bcryptjs');
 const { reset } = require('nodemon');
 const {
@@ -22,7 +22,10 @@ const PORT = 8080;
 //
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
+app.use(cookieSession({
+  name: 'session',
+  keys: ['secretKey', 'superSecretKey'],
+}));
 
 
 //
@@ -37,7 +40,7 @@ app.post('/login', (req, res) => {
     return display403ErrorMsg(res, 'Invalid login parameters');
   }
 
-  res.cookie('user_id', userExists.id);
+  req.session.userID = userExists.id;
   res.redirect('/urls');
 });
 
@@ -54,7 +57,7 @@ app.get('/login', (req, res) => {
 });
 
 app.post('/logout', (req, res) => {
-  res.clearCookie('user_id');
+  req.session = null;
   res.redirect('/login');
 });
 
@@ -92,10 +95,10 @@ app.post('/register', (req, res) => {
   userDatabase[newID] = {
     id: newID,
     email,
-    password: bcrypt.hashSync(password, 10)
+    password: bcrypt.hashSync(password)
   };
 
-  res.cookie('user_id', newID);
+  req.session.userID = newID;
   res.redirect('/urls');
 });
 
@@ -104,7 +107,7 @@ app.post('/register', (req, res) => {
 app.get('/urls', (req, res) => {
   const templateVars = {
     currentUser: getCurrentUserID(req),
-    urls: urlsForUser(req.cookies.user_id)
+    urls: urlsForUser(req.session.userID)
   };
 
   if (!getCurrentUserID(req)) {
@@ -126,7 +129,7 @@ app.post('/urls', (req, res) => {
   // Add the new url to the urlDatabase
   urlDatabase[urlID] = {
     longURL: req.body.longURL,
-    userID: req.cookies.user_id
+    userID: req.session.userID
   };
 
   res.redirect(`/urls/${urlID}`);
@@ -158,7 +161,7 @@ app.get('/urls/:id', (req, res) => {
     return display404ErrorMsg(res, '/urls');
   }
   
-  if (!userHasURL(req.cookies.user_id, reqID)) {
+  if (!userHasURL(req.session.userID, reqID)) {
     return display403ErrorMsg(res, 'Unable to edit other users\' URLs', '/urls');
   }
   
@@ -183,7 +186,7 @@ app.post('/urls/:id', (req, res) => {
     return display404ErrorMsg(res, '/urls');
   }
 
-  if (!userHasURL(req.cookies.user_id, reqID)) {
+  if (!userHasURL(req.session.userID, reqID)) {
     return display403ErrorMsg(res, 'Unable to edit other users\' URLs', '/urls');
   }
 
@@ -201,7 +204,7 @@ app.post('/urls/:id/delete', (req, res) => {
     return display404ErrorMsg(res, '/urls');
   }
 
-  if (!userHasURL(req.cookies.user_id, req.params.id)) {
+  if (!userHasURL(req.session.userID, req.params.id)) {
     return display403ErrorMsg(res, 'Unable to delete other users\' URLs', '/urls');
   }
 
