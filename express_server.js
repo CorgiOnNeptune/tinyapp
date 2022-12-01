@@ -30,8 +30,8 @@ const getUserByEmail = (email, database = userDatabase) => {
   return null;
 };
 
-const getCurrentUserID = (request, database = userDatabase) => {
-  return database[request.cookies.user_id];
+const getCurrentUserID = (req, database = userDatabase) => {
+  return database[req.cookies.user_id];
 };
 
 const displayErrorMsg = (res, status, errMsg, returnLink) => {
@@ -41,13 +41,35 @@ const displayErrorMsg = (res, status, errMsg, returnLink) => {
   <b><a href="${returnLink}">Try again</a></b></p>`);
 };
 
+const urlsForUser = (userID, database = urlDatabase) => {
+  let userURLS = {};
+
+  for (const data in database) {
+    if (database[data].userID === userID) {
+      userURLS[data] = database[data].longURL;
+    }
+  }
+
+  return userURLS;
+};
+
 //
 // Data
 //
 
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com",
+  'b2xVn2': {
+    longURL: "http://www.lighthouselabs.ca",
+    userID: 'aJ481W'
+  },
+  '9sm5xK': {
+    longURL: "http://www.google.com",
+    userID: 'aJ481W'
+  },
+  'wQz2yQ': {
+    longURL: "http://www.diamondsonneptune.com",
+    userID: 'qTSPlk'
+  },
 };
 
 const userDatabase = {
@@ -61,6 +83,16 @@ const userDatabase = {
     email: "user2@example.com",
     password: "dishwasher-funk",
   },
+  'aJ481W': {
+    id: 'aJ481W',
+    email: 'user3@example.com',
+    password: '1234',
+  },
+  'qTSPlk': {
+    id: 'qTSPlk',
+    email: 'diamonds@example.com',
+    password: '1234',
+  }
 };
 
 //
@@ -146,7 +178,7 @@ app.post('/register', (req, res) => {
 app.get('/urls', (req, res) => {
   const templateVars = {
     currentUser: getCurrentUserID(req),
-    urls: urlDatabase
+    urls: urlsForUser(req.cookies.user_id)
   };
 
   if (!getCurrentUserID(req)) {
@@ -190,7 +222,7 @@ app.get('/urls/new', (req, res) => {
 
 // Take user to details page about their short URL
 app.get('/urls/:id', (req, res) => {
-  const longURL = urlDatabase[req.params.id];
+  const longURL = urlsForUser(req.cookies.user_id)[req.params.id];
   
   const templateVars = {
     currentUser: getCurrentUserID(req),
@@ -223,9 +255,9 @@ app.post('/urls/:id', (req, res) => {
 
     return displayErrorMsg(res, res.statusCode, errMsg, '/login');
   }
-
   const newURL = req.body.newURL;
-  urlDatabase[req.params.id] = newURL;
+
+  urlDatabase[req.params.id].longURL = newURL;
 
   res.redirect(`/urls`);
 });
