@@ -1,109 +1,26 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const { reset } = require('nodemon');
+const {
+  generateRandomString,
+  getUserByEmail,
+  getCurrentUserID,
+  displayErrorMsg,
+  urlsForUser,
+  userHasURL
+} = require('./helpers.js');
+const { urlDatabase, userDatabase } = require('./data');
+
 const app = express();
 const PORT = 8080;
 
 //
 // Middleware
 //
-
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-const generateRandomString = () => {
-  const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0213456789';
-  let result = '';
-
-  for (let i = 0; i < 6; i++) {
-    result += chars.charAt(Math.random() * chars.length);
-  }
-  return result;
-};
-
-const getUserByEmail = (email, database = userDatabase) => {
-  for (const data in database) {
-    if (database[data].email === email) {
-      return database[data];
-    }
-  }
-  return null;
-};
-
-const getCurrentUserID = (req, database = userDatabase) => {
-  return database[req.cookies.user_id];
-};
-
-const displayErrorMsg = (res, status, errMsg, returnLink) => {
-  console.log(`Error ${status}: ${errMsg}`);
-  return res.send(`<h3>Error ${status}</h3>
-  <p>${errMsg}<br/><br/>
-  <b><a href="${returnLink}">Try again</a></b></p>`);
-};
-
-const urlsForUser = (userID, database = urlDatabase) => {
-  let userURLS = {};
-
-  for (const data in database) {
-    if (database[data].userID === userID) {
-      userURLS[data] = database[data].longURL;
-    }
-  }
-
-  return userURLS;
-};
-
-const userHasURL = (userID, urlID) => {
-  const userURLs = urlsForUser(userID);
-
-  if (!userURLs[urlID] || userURLs[urlID] === undefined) {
-    return false;
-  }
-  return true;
-};
-
-//
-// Data
-//
-
-const urlDatabase = {
-  'b2xVn2': {
-    longURL: "http://www.lighthouselabs.ca",
-    userID: 'aJ481W'
-  },
-  '9sm5xK': {
-    longURL: "http://www.google.com",
-    userID: 'aJ481W'
-  },
-  'wQz2yQ': {
-    longURL: "http://www.diamondsonneptune.com",
-    userID: 'qTSPlk'
-  },
-};
-
-const userDatabase = {
-  userRandomID: {
-    id: "userRandomID",
-    email: "user@example.com",
-    password: "purple-monkey-dinosaur",
-  },
-  user2RandomID: {
-    id: "user2RandomID",
-    email: "user2@example.com",
-    password: "dishwasher-funk",
-  },
-  'aJ481W': {
-    id: 'aJ481W',
-    email: 'user3@example.com',
-    password: '1234',
-  },
-  'qTSPlk': {
-    id: 'qTSPlk',
-    email: 'diamonds@example.com',
-    password: '1234',
-  }
-};
 
 //
 // Routes
