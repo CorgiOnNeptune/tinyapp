@@ -4,17 +4,24 @@ const urlDatabase = {
   'b2xVn2': {
     longURL: "http://www.lighthouselabs.ca",
     userID: 'aJ481W',
-    timesVisited: 0
+    timesVisited: 0,
+    uniqueVisitors: 0,
+    visits: [],
   },
   '9sm5xK': {
     longURL: "http://www.google.com",
     userID: 'aJ481W',
-    timesVisited: 0
+    timesVisited: 0,
+    uniqueVisitors: 0,
+    visits: [],
+
   },
   'wQz2yQ': {
     longURL: "http://www.diamondsonneptune.com",
     userID: 'qTSPlk',
-    timesVisited: 0
+    timesVisited: 0,
+    uniqueVisitors: 0,
+    visits: [],
   },
 };
 

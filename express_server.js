@@ -171,8 +171,7 @@ app.get('/urls/:id', (req, res) => {
   const templateVars = {
     currentUser: getCurrentUserByCookie(req),
     id: reqID,
-    longURL: urlData.longURL,
-    timesVisited: urlData.timesVisited
+    urlData,
   };
 
   res.render('urls_show', templateVars);
@@ -225,6 +224,7 @@ app.get('/u/:id', (req, res) => {
     return display404ErrorMsg(res, '/urls');
   }
 
+  urlData.uniqueVisitors = (req.session.views || 0) + 1;
   urlData.timesVisited += 1;
   res.redirect(urlDatabase[req.params.id].longURL);
 });

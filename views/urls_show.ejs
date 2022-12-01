@@ -18,12 +18,14 @@
       <div class="card-header"></div>
       <div class="card-body">
         <h4 class="card-title">TinyURL for:</h4>
-        <h5><%= longURL %></h5>
+        <h5><%= urlData.longURL %></h5>
         <br/>
-        <p class="card-text">
+        <h5 class="card-text border-bottom" style="padding-bottom: 20px;">
           TinyURL ID: <a href="/u/<%= id %>"><%= id %></a>
-        </p>
-        <p>Times visited: <%= timesVisited %></p>
+        </h5>
+        <h4 id="url-stats" class="card-title" style="padding: 10px;">TinyURL Stats</h5>
+        <p>Total Times visited: <%= urlData.timesVisited %></p>
+        <p>Unique visitors: <%= urlData.uniqueVisitors %></p>
       </div>
       <div class="card-footer text-muted">
         <h2>Edit URL</h2>
@@ -35,7 +37,7 @@
                 name="newLongURL"
                 placeholder="http://"
                 style="margin:10px;"
-                value="<%= longURL %>"
+                value="<%= urlData.longURL %>"
               />
               <button type="submit" value="Edit" class="btn  btn-primary">Submit</button>
           </form>
