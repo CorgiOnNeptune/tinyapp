@@ -16,10 +16,10 @@ const getUserByEmail = (email, database = userDatabase) => {
       return database[data];
     }
   }
-  return null;
+  return undefined;
 };
 
-const getCurrentUserID = (req, database = userDatabase) => {
+const getCurrentUserByCookie = (req, database = userDatabase) => {
   return database[req.session.userID];
 };
 
@@ -52,8 +52,8 @@ const urlsForUser = (userID, database = urlDatabase) => {
   return userURLS;
 };
 
-const userHasURL = (userID, urlID) => {
-  const userURLs = urlsForUser(userID);
+const userOwnsURL = (userID, urlID, database = urlDatabase) => {
+  const userURLs = urlsForUser(userID, database);
 
   if (!userURLs[urlID] || userURLs[urlID] === undefined) {
     return false;
@@ -65,11 +65,11 @@ const userHasURL = (userID, urlID) => {
 module.exports = {
   generateRandomString,
   getUserByEmail,
-  getCurrentUserID,
+  getCurrentUserByCookie,
   displayErrorMsg,
   display404ErrorMsg,
   display403ErrorMsg,
   urlsForUser,
-  userHasURL
+  userOwnsURL
 };
       

@@ -5,12 +5,12 @@ const { reset } = require('nodemon');
 const {
   generateRandomString,
   getUserByEmail,
-  getCurrentUserID,
+  getCurrentUserByCookie,
   displayErrorMsg,
   display404ErrorMsg,
   display403ErrorMsg,
   urlsForUser,
-  userHasURL
+  userOwnsURL
 } = require('./helpers');
 const { urlDatabase, userDatabase } = require('./data');
 
@@ -46,10 +46,10 @@ app.post('/login', (req, res) => {
 
 app.get('/login', (req, res) => {
   const templateVars = {
-    currentUser: getCurrentUserID(req)
+    currentUser: getCurrentUserByCookie(req)
   };
 
-  if (!getCurrentUserID(req)) {
+  if (!getCurrentUserByCookie(req)) {
     return res.render('login', templateVars);
   }
   
@@ -65,10 +65,10 @@ app.post('/logout', (req, res) => {
 // Registration requests
 app.get('/register', (req, res) => {
   const templateVars = {
-    currentUser: getCurrentUserID(req)
+    currentUser: getCurrentUserByCookie(req)
   };
 
-  if (!getCurrentUserID(req)) {
+  if (!getCurrentUserByCookie(req)) {
     return res.render('register', templateVars);
   }
   
@@ -106,11 +106,11 @@ app.post('/register', (req, res) => {
 // Show logged in user list of their urls
 app.get('/urls', (req, res) => {
   const templateVars = {
-    currentUser: getCurrentUserID(req),
+    currentUser: getCurrentUserByCookie(req),
     urls: urlsForUser(req.session.userID)
   };
 
-  if (!getCurrentUserID(req)) {
+  if (!getCurrentUserByCookie(req)) {
     return res.redirect('/login');
   }
 
@@ -122,7 +122,7 @@ app.get('/urls', (req, res) => {
 app.post('/urls', (req, res) => {
   const urlID = generateRandomString();
 
-  if (!getCurrentUserID(req)) {
+  if (!getCurrentUserByCookie(req)) {
     return display403ErrorMsg(res);
   }
 
@@ -137,10 +137,10 @@ app.post('/urls', (req, res) => {
 
 app.get('/urls/new', (req, res) => {
   const templateVars = {
-    currentUser: getCurrentUserID(req),
+    currentUser: getCurrentUserByCookie(req),
   };
 
-  if (!getCurrentUserID(req)) {
+  if (!getCurrentUserByCookie(req)) {
     return res.redirect('/login');
   }
 
@@ -153,7 +153,7 @@ app.get('/urls/:id', (req, res) => {
   const reqID = req.params.id;
   const urlData = urlDatabase[reqID];
   
-  if (!getCurrentUserID(req)) {
+  if (!getCurrentUserByCookie(req)) {
     return display403ErrorMsg(res);
   }
 
@@ -161,12 +161,12 @@ app.get('/urls/:id', (req, res) => {
     return display404ErrorMsg(res, '/urls');
   }
   
-  if (!userHasURL(req.session.userID, reqID)) {
+  if (!userOwnsURL(req.session.userID, reqID)) {
     return display403ErrorMsg(res, 'Unable to edit other users\' URLs', '/urls');
   }
   
   const templateVars = {
-    currentUser: getCurrentUserID(req),
+    currentUser: getCurrentUserByCookie(req),
     id: reqID,
     longURL: urlData.longURL
   };
@@ -178,7 +178,7 @@ app.get('/urls/:id', (req, res) => {
 app.post('/urls/:id', (req, res) => {
   const reqID = req.params.id;
 
-  if (!getCurrentUserID(req)) {
+  if (!getCurrentUserByCookie(req)) {
     return display403ErrorMsg(res);
   }
 
@@ -186,7 +186,7 @@ app.post('/urls/:id', (req, res) => {
     return display404ErrorMsg(res, '/urls');
   }
 
-  if (!userHasURL(req.session.userID, reqID)) {
+  if (!userOwnsURL(req.session.userID, reqID)) {
     return display403ErrorMsg(res, 'Unable to edit other users\' URLs', '/urls');
   }
 
@@ -196,7 +196,7 @@ app.post('/urls/:id', (req, res) => {
 
 // Manage POST requests for the Delete button
 app.post('/urls/:id/delete', (req, res) => {
-  if (!getCurrentUserID(req)) {
+  if (!getCurrentUserByCookie(req)) {
     return display403ErrorMsg(res);
   }
   
@@ -204,7 +204,7 @@ app.post('/urls/:id/delete', (req, res) => {
     return display404ErrorMsg(res, '/urls');
   }
 
-  if (!userHasURL(req.session.userID, req.params.id)) {
+  if (!userOwnsURL(req.session.userID, req.params.id)) {
     return display403ErrorMsg(res, 'Unable to delete other users\' URLs', '/urls');
   }
 
@@ -223,7 +223,7 @@ app.get('/u/:id', (req, res) => {
 });
 
 app.get('/', (req, res) => {
-  if (!getCurrentUserID(req)) {
+  if (!getCurrentUserByCookie(req)) {
     return res.redirect('/login');
   }
 
