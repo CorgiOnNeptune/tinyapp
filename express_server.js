@@ -247,6 +247,13 @@ app.get('/urls/:id', (req, res) => {
     return displayErrorMsg(res, res.statusCode, errMsg, '/login');
   }
 
+  if (!userHasURL(req.cookies.user_id, reqID)) {
+    const errMsg = 'Unable to view other users\' URLs.';
+    res.statusCode = 403;
+
+    return displayErrorMsg(res, res.statusCode, errMsg, '/urls');
+  }
+
   if (longURL === undefined) {
     const errMsg = 'Page not found.';
     res.statusCode = 404;
@@ -268,16 +275,16 @@ app.post('/urls/:id', (req, res) => {
     return displayErrorMsg(res, res.statusCode, errMsg, '/login');
   }
 
-  if (!urlDatabase[reqID]) {
-    const errMsg = 'Page not found.';
-    res.statusCode = 404;
+  if (!userHasURL(req.cookies.user_id, reqID)) {
+    const errMsg = 'Unable to edit other users\' URLs.';
+    res.statusCode = 403;
 
     return displayErrorMsg(res, res.statusCode, errMsg, '/urls');
   }
 
-  if (!userHasURL(req.cookies.user_id, reqID)) {
-    const errMsg = 'Unable to edit other users\' URLs.';
-    res.statusCode = 403;
+  if (!urlDatabase[reqID]) {
+    const errMsg = 'Page not found.';
+    res.statusCode = 404;
 
     return displayErrorMsg(res, res.statusCode, errMsg, '/urls');
   }
@@ -295,16 +302,16 @@ app.post('/urls/delete/:id', (req, res) => {
     return displayErrorMsg(res, res.statusCode, errMsg, '/login');
   }
 
-  if (!urlDatabase[req.params.id]) {
-    const errMsg = 'Unable to delete page not found.';
-    res.statusCode = 404;
+  if (!userHasURL(req.cookies.user_id, req.params.id)) {
+    const errMsg = 'Unable to delete other users\' URLs.';
+    res.statusCode = 403;
 
     return displayErrorMsg(res, res.statusCode, errMsg, '/urls');
   }
 
-  if (!userHasURL(req.cookies.user_id, req.params.id)) {
-    const errMsg = 'Unable to delete other users\' URLs.';
-    res.statusCode = 403;
+  if (!urlDatabase[req.params.id]) {
+    const errMsg = 'Page not found.';
+    res.statusCode = 404;
 
     return displayErrorMsg(res, res.statusCode, errMsg, '/urls');
   }
