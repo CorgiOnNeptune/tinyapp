@@ -19,22 +19,22 @@ const userDatabase = {
   userRandomID: {
     id: "userRandomID",
     email: "user@example.com",
-    password: bcrypt.hashSync("purple-monkey-dinosaur", 10),
+    password: bcrypt.hashSync("purple-monkey-dinosaur"),
   },
   user2RandomID: {
     id: "user2RandomID",
     email: "user2@example.com",
-    password: bcrypt.hashSync("dishwasher-funk", 10),
+    password: bcrypt.hashSync("dishwasher-funk"),
   },
   'aJ481W': {
     id: 'aJ481W',
     email: 'user3@example.com',
-    password: bcrypt.hashSync('1234', 10),
+    password: bcrypt.hashSync('1234'),
   },
   'qTSPlk': {
     id: 'qTSPlk',
     email: 'diamonds@example.com',
-    password: bcrypt.hashSync('123456', 10),
+    password: bcrypt.hashSync('123456'),
   }
 };
 

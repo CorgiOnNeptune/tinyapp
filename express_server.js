@@ -34,13 +34,13 @@ app.use(cookieSession({
 
 // Login/logout request routes
 app.post('/login', (req, res) => {
-  const userExists = getUserByEmail(req.body.email);
+  const user = getUserByEmail(req.body.email);
 
-  if (!userExists || !bcrypt.compareSync(req.body.password, userExists.password)) {
+  if (!user || !bcrypt.compareSync(req.body.password, user.password)) {
     return display403ErrorMsg(res, 'Invalid login parameters');
   }
 
-  req.session.userID = userExists.id;
+  req.session.userID = user.id;
   res.redirect('/urls');
 });
 
