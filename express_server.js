@@ -1,4 +1,5 @@
 const express = require('express');
+const methodOverride = require('method-override');
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcryptjs');
 const { reset } = require('nodemon');
@@ -22,6 +23,7 @@ const PORT = 8080;
 //
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
+app.use(methodOverride('_method'));
 app.use(cookieSession({
   name: 'session',
   keys: ['secretKey', 'superSecretKey'],
@@ -195,7 +197,7 @@ app.post('/urls/:id', (req, res) => {
 });
 
 // Manage POST requests for the Delete button
-app.post('/urls/:id/delete', (req, res) => {
+app.delete('/urls/:id/delete', (req, res) => {
   if (!getCurrentUserByCookie(req)) {
     return display403ErrorMsg(res);
   }
