@@ -328,6 +328,14 @@ app.get('/u/:id', (req, res) => {
   res.redirect(longURL);
 });
 
+app.get('/', (req, res) => {
+  if (!getCurrentUserID(req)) {
+    return res.redirect('/login');
+  }
+
+  res.redirect('/urls');
+});
+
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
