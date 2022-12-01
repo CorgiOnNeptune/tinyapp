@@ -8,7 +8,7 @@ const {
   displayErrorMsg,
   urlsForUser,
   userHasURL
-} = require('./helpers.js');
+} = require('./helpers');
 const { urlDatabase, userDatabase } = require('./data');
 
 const app = express();
