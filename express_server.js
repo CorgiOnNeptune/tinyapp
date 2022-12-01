@@ -1,5 +1,6 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
+const { reset } = require('nodemon');
 const app = express();
 const PORT = 8080;
 
@@ -200,18 +201,17 @@ app.get('/urls', (req, res) => {
 
 // Create new tiny URL
 app.post('/urls', (req, res) => {
-  const longURL = req.body.longURL;
   const urlID = generateRandomString();
 
   if (!getCurrentUserID(req)) {
     const errMsg = 'Non-registered user unable to shorten URLs.';
     res.statusCode = 403;
-
+    
     return res.send(`Error ${res.statusCode}\n${errMsg}\n`);
   }
 
   // Add the new url to the urlDatabase
-  urlDatabase[urlID] = { longURL, userID: req.cookies.user_id };
+  urlDatabase[urlID] = { longURL: req.body.longURL, userID: req.cookies.user_id };
 
   res.redirect(`/urls/${urlID}`);
 });
@@ -294,7 +294,7 @@ app.post('/urls/:id', (req, res) => {
 });
 
 // Manage POST requests for the Delete button
-app.post('/urls/delete/:id', (req, res) => {
+app.post('/urls/:id/delete', (req, res) => {
   if (!getCurrentUserID(req)) {
     const errMsg = 'Non-registered user unable to delete URLs.';
     res.statusCode = 403;
