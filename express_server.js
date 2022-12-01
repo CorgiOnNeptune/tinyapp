@@ -53,6 +53,15 @@ const urlsForUser = (userID, database = urlDatabase) => {
   return userURLS;
 };
 
+const userHasURL = (userID, urlID) => {
+  const userURLs = urlsForUser(userID);
+
+  if (!userURLs[urlID] || userURLs[urlID] === undefined) {
+    return false;
+  }
+  return true;
+};
+
 //
 // Data
 //
@@ -223,7 +232,6 @@ app.get('/urls/new', (req, res) => {
 // Take user to details page about their short URL
 app.get('/urls/:id', (req, res) => {
   const longURL = urlsForUser(req.cookies.user_id)[req.params.id];
-  
   const templateVars = {
     currentUser: getCurrentUserID(req),
     id: req.params.id,
@@ -249,6 +257,8 @@ app.get('/urls/:id', (req, res) => {
 
 // Manage POST requests for Edit button
 app.post('/urls/:id', (req, res) => {
+  const reqID = req.params.id;
+
   if (!getCurrentUserID(req)) {
     const errMsg = 'Non-registered user unable to edit URLs.';
     res.statusCode = 403;
@@ -256,15 +266,21 @@ app.post('/urls/:id', (req, res) => {
     return displayErrorMsg(res, res.statusCode, errMsg, '/login');
   }
 
-  if (!urlsForUser(req.params.id)) {
-    const errMsg = 'Unable to edit other users\' URLs';
+  if (!urlDatabase[reqID]) {
+    const errMsg = 'Page not found.';
+    res.statusCode = 404;
+
+    return displayErrorMsg(res, res.statusCode, errMsg, '/urls');
+  }
+
+  if (!userHasURL(req.cookies.user_id, reqID)) {
+    const errMsg = 'Unable to edit other users\' URLs.';
     res.statusCode = 403;
 
     return displayErrorMsg(res, res.statusCode, errMsg, '/urls');
   }
-  const newURL = req.body.newURL;
-  urlDatabase[req.params.id].longURL = newURL;
 
+  urlDatabase[reqID].longURL = req.body.newLongURL;
   res.redirect(`/urls`);
 });
 
@@ -277,8 +293,15 @@ app.post('/urls/delete/:id', (req, res) => {
     return displayErrorMsg(res, res.statusCode, errMsg, '/login');
   }
 
-  if (!urlsForUser(req.params.id)) {
-    const errMsg = 'Unable to delete other users\' URLs';
+  if (!urlDatabase[req.params.id]) {
+    const errMsg = 'Unable to delete page not found.';
+    res.statusCode = 404;
+
+    return displayErrorMsg(res, res.statusCode, errMsg, '/urls');
+  }
+
+  if (!userHasURL(req.cookies.user_id, req.params.id)) {
+    const errMsg = 'Unable to delete other users\' URLs.';
     res.statusCode = 403;
 
     return displayErrorMsg(res, res.statusCode, errMsg, '/urls');
