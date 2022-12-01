@@ -31,12 +31,10 @@ app.use(cookieParser());
 
 // Login/logout request routes
 app.post('/login', (req, res) => {
-  const inputEmail = req.body.email;
-  const inputPassword = req.body.password;
-  const userExists = getUserByEmail(inputEmail);
+  const userExists = getUserByEmail(req.body.email);
 
-  if (!userExists || !bcrypt.compareSync(inputPassword, userExists.password)) {
-    display403ErrorMsg(res, 'Invalid login parameters');
+  if (!userExists || !bcrypt.compareSync(req.body.password, userExists.password)) {
+    return display403ErrorMsg(res, 'Invalid login parameters');
   }
 
   res.cookie('user_id', userExists.id);
@@ -97,7 +95,6 @@ app.post('/register', (req, res) => {
     password: bcrypt.hashSync(password, 10)
   };
 
-  console.log(userDatabase);
   res.cookie('user_id', newID);
   res.redirect('/urls');
 });
@@ -151,25 +148,25 @@ app.get('/urls/new', (req, res) => {
 // Take user to details page about their short URL
 app.get('/urls/:id', (req, res) => {
   const reqID = req.params.id;
-  const longURL = urlsForUser(req.cookies.user_id)[reqID];
-
-  const templateVars = {
-    currentUser: getCurrentUserID(req),
-    id: reqID,
-    longURL: longURL
-  };
-
+  const urlData = urlDatabase[reqID];
+  
   if (!getCurrentUserID(req)) {
     return display403ErrorMsg(res);
   }
 
-  if (!longURL || longURL === undefined) {
+  if (!urlData || urlData === undefined) {
     return display404ErrorMsg(res, '/urls');
   }
-
+  
   if (!userHasURL(req.cookies.user_id, reqID)) {
     return display403ErrorMsg(res, 'Unable to edit other users\' URLs', '/urls');
   }
+  
+  const templateVars = {
+    currentUser: getCurrentUserID(req),
+    id: reqID,
+    longURL: urlData.longURL
+  };
 
   res.render('urls_show', templateVars);
 });
@@ -182,12 +179,12 @@ app.post('/urls/:id', (req, res) => {
     return display403ErrorMsg(res);
   }
 
-  if (!userHasURL(req.cookies.user_id, reqID)) {
-    return display403ErrorMsg(res, 'Unable to edit other users\' URLs', '/urls');
-  }
-
   if (!urlDatabase[reqID]) {
     return display404ErrorMsg(res, '/urls');
+  }
+
+  if (!userHasURL(req.cookies.user_id, reqID)) {
+    return display403ErrorMsg(res, 'Unable to edit other users\' URLs', '/urls');
   }
 
   urlDatabase[reqID].longURL = req.body.newLongURL;
@@ -199,13 +196,13 @@ app.post('/urls/:id/delete', (req, res) => {
   if (!getCurrentUserID(req)) {
     return display403ErrorMsg(res);
   }
+  
+  if (!urlDatabase[req.params.id]) {
+    return display404ErrorMsg(res, '/urls');
+  }
 
   if (!userHasURL(req.cookies.user_id, req.params.id)) {
     return display403ErrorMsg(res, 'Unable to delete other users\' URLs', '/urls');
-  }
-
-  if (!urlDatabase[req.params.id]) {
-    return display404ErrorMsg(res, '/urls');
   }
 
   delete urlDatabase[req.params.id];

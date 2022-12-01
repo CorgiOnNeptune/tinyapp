@@ -27,7 +27,7 @@ const displayErrorMsg = (res, status, errMsg, returnLink) => {
   console.log(`Error ${status}: ${errMsg}`);
   return res.send(`<h3>Error ${status}</h3>
   <p>${errMsg}.<br/><br/>
-  <b><a href="${returnLink}">Return</a></b></p>`);
+  <b><a href="${returnLink}">Return</a></b></p>\n`);
 };
 
 const display404ErrorMsg = (res, returnLink) => {
