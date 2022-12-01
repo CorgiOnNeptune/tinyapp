@@ -11,7 +11,8 @@ const {
   display404ErrorMsg,
   display403ErrorMsg,
   urlsForUser,
-  userOwnsURL
+  userOwnsURL,
+  trackVisit
 } = require('./helpers');
 const { urlDatabase, userDatabase } = require('./data');
 

@@ -61,6 +61,32 @@ const userOwnsURL = (userID, urlID, database = urlDatabase) => {
   return true;
 };
 
+const getTime = num => {
+  const date = new Date();
+  let timeSuffix = 'AM';
+
+  if (num > 12) {
+    num = num % 12;
+    timeSuffix = 'PM';
+  }
+
+  return `${num}:${date.getMinutes()}:${date.getSeconds()} ${timeSuffix}`;
+};
+
+const getTimeStamp = () => {
+  const date = new Date();
+  const months = ['Jan.', 'Feb.', 'Mar.', 'Apr.', 'May', 'Jun.', 'Jul.', 'Aug.', 'Sep', 'Oct.', 'Nov.', 'Dec.'];
+  const month = months[date.getMonth()];
+
+  return `${month} ${date.getDate()}, ${date.getFullYear()} @ ${getTime(date.getHours())}`;
+};
+
+const trackVisit = () => {
+  const timestamp = getTimeStamp();
+  const visitorID = generateRandomString();
+
+  return {timestamp, visitorID};
+};
 
 module.exports = {
   generateRandomString,
@@ -70,6 +96,7 @@ module.exports = {
   display404ErrorMsg,
   display403ErrorMsg,
   urlsForUser,
-  userOwnsURL
+  userOwnsURL,
+  trackVisit
 };
       
