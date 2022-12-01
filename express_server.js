@@ -33,7 +33,7 @@ app.post('/login', (req, res) => {
   const inputPassword = req.body.password;
   const userExists = getUserByEmail(inputEmail);
 
-  if (!userExists || inputPassword !== userExists.password) {
+  if (!userExists || !bcrypt.compareSync(inputPassword, userExists.password)) {
     const errMsg = 'Invalid login parameters.';
     res.statusCode = 403;
 
@@ -95,8 +95,13 @@ app.post('/register', (req, res) => {
   }
   
   // Add new user to userDatabase
-  userDatabase[newID] = { id: newID, email, password };
+  userDatabase[newID] = {
+    id: newID,
+    email,
+    password: bcrypt.hashSync(password, 10)
+  };
 
+  console.log(userDatabase);
   res.cookie('user_id', newID);
   res.redirect('/urls');
 });
@@ -129,7 +134,10 @@ app.post('/urls', (req, res) => {
   }
 
   // Add the new url to the urlDatabase
-  urlDatabase[urlID] = { longURL: req.body.longURL, userID: req.cookies.user_id };
+  urlDatabase[urlID] = {
+    longURL: req.body.longURL,
+    userID: req.cookies.user_id
+  };
 
   res.redirect(`/urls/${urlID}`);
 });
