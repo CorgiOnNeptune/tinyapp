@@ -202,7 +202,7 @@ app.post('/urls', (req, res) => {
   }
 
   // Add the new url to the urlDatabase
-  urlDatabase[id] = longURL;
+  urlDatabase[id] = { longURL, userID: req.cookies.user_id };
 
   res.redirect(`/urls/${id}`);
 });
@@ -238,7 +238,7 @@ app.get('/urls/:id', (req, res) => {
   }
 
   if (longURL === undefined) {
-    const errMsg = 'Invalid URL requested.';
+    const errMsg = 'Page not found.';
     res.statusCode = 404;
 
     return displayErrorMsg(res, res.statusCode, errMsg, '/urls');
@@ -278,10 +278,10 @@ app.post('/urls/delete/:id', (req, res) => {
 
 // Take anybody to the longURL's page
 app.get('/u/:id', (req, res) => {
-  const longURL = urlDatabase[req.params.id];
+  const longURL = urlDatabase[req.params.id].longURL;
 
   if (longURL === undefined) {
-    const errMsg = 'Invalid URL requested.';
+    const errMsg = 'Page not found.';
     res.statusCode = 404;
 
     return displayErrorMsg(res, res.statusCode, errMsg, '/urls');
