@@ -121,7 +121,7 @@ app.get('/urls', (req, res) => {
 
 
 // Create new tiny URL
-app.post('/urls', (req, res) => {
+app.put('/urls', (req, res) => {
   const urlID = generateRandomString();
 
   if (!getCurrentUserByCookie(req)) {
@@ -177,7 +177,7 @@ app.get('/urls/:id', (req, res) => {
 });
 
 // Manage POST requests for Edit button
-app.post('/urls/:id', (req, res) => {
+app.put('/urls/:id', (req, res) => {
   const reqID = req.params.id;
 
   if (!getCurrentUserByCookie(req)) {
