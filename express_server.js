@@ -201,7 +201,7 @@ app.get('/urls', (req, res) => {
 // Create new tiny URL
 app.post('/urls', (req, res) => {
   const longURL = req.body.longURL;
-  const id = generateRandomString();
+  const urlID = generateRandomString();
 
   if (!getCurrentUserID(req)) {
     const errMsg = 'Non-registered user unable to shorten URLs.';
@@ -211,9 +211,9 @@ app.post('/urls', (req, res) => {
   }
 
   // Add the new url to the urlDatabase
-  urlDatabase[id] = { longURL, userID: req.cookies.user_id };
+  urlDatabase[urlID] = { longURL, userID: req.cookies.user_id };
 
-  res.redirect(`/urls/${id}`);
+  res.redirect(`/urls/${urlID}`);
 });
 
 app.get('/urls/new', (req, res) => {
@@ -231,10 +231,12 @@ app.get('/urls/new', (req, res) => {
 
 // Take user to details page about their short URL
 app.get('/urls/:id', (req, res) => {
-  const longURL = urlsForUser(req.cookies.user_id)[req.params.id];
+  const reqID = req.params.id;
+  const longURL = urlsForUser(req.cookies.user_id)[reqID];
+
   const templateVars = {
     currentUser: getCurrentUserID(req),
-    id: req.params.id,
+    id: reqID,
     longURL: longURL
   };
 
