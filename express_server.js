@@ -7,6 +7,8 @@ const {
   getUserByEmail,
   getCurrentUserID,
   displayErrorMsg,
+  display404ErrorMsg,
+  display403ErrorMsg,
   urlsForUser,
   userHasURL
 } = require('./helpers');
@@ -34,10 +36,7 @@ app.post('/login', (req, res) => {
   const userExists = getUserByEmail(inputEmail);
 
   if (!userExists || !bcrypt.compareSync(inputPassword, userExists.password)) {
-    const errMsg = 'Invalid login parameters.';
-    res.statusCode = 403;
-
-    return displayErrorMsg(res, res.statusCode, errMsg, '/login');
+    display403ErrorMsg(res, 'Invalid login parameters');
   }
 
   res.cookie('user_id', userExists.id);
@@ -81,17 +80,14 @@ app.post('/register', (req, res) => {
   const password = req.body.password;
 
   if (!email || !password || getUserByEmail(email)) {
-    let errMsg = getUserByEmail(email) ? `Email already in use.` : `Email or password entry not valid.`;
+    const errMsg = getUserByEmail(email) ? `Email already in use` : `Email or password entry not valid`;
     res.statusCode = 400;
 
     return displayErrorMsg(res, res.statusCode, errMsg, '/register');
   }
 
   if (password !== req.body.confirmPassword) {
-    const errMsg = 'Passwords do not match.';
-    res.statusCode = 403;
-    
-    return displayErrorMsg(res, res.statusCode, errMsg, '/register');
+    return display403ErrorMsg(res, 'Passwords do not match', '/register');
   }
   
   // Add new user to userDatabase
@@ -127,10 +123,7 @@ app.post('/urls', (req, res) => {
   const urlID = generateRandomString();
 
   if (!getCurrentUserID(req)) {
-    const errMsg = 'Non-registered user unable to shorten URLs.';
-    res.statusCode = 403;
-    
-    return res.send(`Error ${res.statusCode}\n${errMsg}\n`);
+    return display403ErrorMsg(res);
   }
 
   // Add the new url to the urlDatabase
@@ -167,24 +160,15 @@ app.get('/urls/:id', (req, res) => {
   };
 
   if (!getCurrentUserID(req)) {
-    const errMsg = 'Non-registered user unable to edit URLs.';
-    res.statusCode = 403;
+    return display403ErrorMsg(res);
+  }
 
-    return displayErrorMsg(res, res.statusCode, errMsg, '/login');
+  if (!longURL || longURL === undefined) {
+    return display404ErrorMsg(res, '/urls');
   }
 
   if (!userHasURL(req.cookies.user_id, reqID)) {
-    const errMsg = 'Unable to view other users\' URLs.';
-    res.statusCode = 403;
-
-    return displayErrorMsg(res, res.statusCode, errMsg, '/urls');
-  }
-
-  if (longURL === undefined) {
-    const errMsg = 'Page not found.';
-    res.statusCode = 404;
-
-    return displayErrorMsg(res, res.statusCode, errMsg, '/urls');
+    return display403ErrorMsg(res, 'Unable to edit other users\' URLs', '/urls');
   }
 
   res.render('urls_show', templateVars);
@@ -195,24 +179,15 @@ app.post('/urls/:id', (req, res) => {
   const reqID = req.params.id;
 
   if (!getCurrentUserID(req)) {
-    const errMsg = 'Non-registered user unable to edit URLs.';
-    res.statusCode = 403;
-
-    return displayErrorMsg(res, res.statusCode, errMsg, '/login');
+    return display403ErrorMsg(res);
   }
 
   if (!userHasURL(req.cookies.user_id, reqID)) {
-    const errMsg = 'Unable to edit other users\' URLs.';
-    res.statusCode = 403;
-
-    return displayErrorMsg(res, res.statusCode, errMsg, '/urls');
+    return display403ErrorMsg(res, 'Unable to edit other users\' URLs', '/urls');
   }
 
   if (!urlDatabase[reqID]) {
-    const errMsg = 'Page not found.';
-    res.statusCode = 404;
-
-    return displayErrorMsg(res, res.statusCode, errMsg, '/urls');
+    return display404ErrorMsg(res, '/urls');
   }
 
   urlDatabase[reqID].longURL = req.body.newLongURL;
@@ -222,24 +197,15 @@ app.post('/urls/:id', (req, res) => {
 // Manage POST requests for the Delete button
 app.post('/urls/:id/delete', (req, res) => {
   if (!getCurrentUserID(req)) {
-    const errMsg = 'Non-registered user unable to delete URLs.';
-    res.statusCode = 403;
-
-    return displayErrorMsg(res, res.statusCode, errMsg, '/login');
+    return display403ErrorMsg(res);
   }
 
   if (!userHasURL(req.cookies.user_id, req.params.id)) {
-    const errMsg = 'Unable to delete other users\' URLs.';
-    res.statusCode = 403;
-
-    return displayErrorMsg(res, res.statusCode, errMsg, '/urls');
+    return display403ErrorMsg(res, 'Unable to delete other users\' URLs', '/urls');
   }
 
   if (!urlDatabase[req.params.id]) {
-    const errMsg = 'Page not found.';
-    res.statusCode = 404;
-
-    return displayErrorMsg(res, res.statusCode, errMsg, '/urls');
+    return display404ErrorMsg(res, '/urls');
   }
 
   delete urlDatabase[req.params.id];
@@ -250,10 +216,7 @@ app.post('/urls/:id/delete', (req, res) => {
 // Take anybody to the longURL's page
 app.get('/u/:id', (req, res) => {
   if (!urlDatabase[req.params.id]) {
-    const errMsg = 'Page not found.';
-    res.statusCode = 404;
-
-    return displayErrorMsg(res, res.statusCode, errMsg, '/urls');
+    return display404ErrorMsg(res, '/urls');
   }
 
   res.redirect(urlDatabase[req.params.id].longURL);

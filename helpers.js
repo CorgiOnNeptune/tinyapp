@@ -26,8 +26,18 @@ const getCurrentUserID = (req, database = userDatabase) => {
 const displayErrorMsg = (res, status, errMsg, returnLink) => {
   console.log(`Error ${status}: ${errMsg}`);
   return res.send(`<h3>Error ${status}</h3>
-  <p>${errMsg}<br/><br/>
-  <b><a href="${returnLink}">Try again</a></b></p>`);
+  <p>${errMsg}.<br/><br/>
+  <b><a href="${returnLink}">Return</a></b></p>`);
+};
+
+const display404ErrorMsg = (res, returnLink) => {
+  res.statusCode = 404;
+  return displayErrorMsg(res, 404, 'Page not found', returnLink);
+};
+
+const display403ErrorMsg = (res, errMsg = 'Please login to proceed', returnLink = '/login') => {
+  res.statusCode = 403;
+  return displayErrorMsg(res, 403, errMsg, returnLink);
 };
 
 const urlsForUser = (userID, database = urlDatabase) => {
@@ -57,6 +67,8 @@ module.exports = {
   getUserByEmail,
   getCurrentUserID,
   displayErrorMsg,
+  display404ErrorMsg,
+  display403ErrorMsg,
   urlsForUser,
   userHasURL
 };
