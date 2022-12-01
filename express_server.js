@@ -131,7 +131,8 @@ app.put('/urls', (req, res) => {
   // Add the new url to the urlDatabase
   urlDatabase[urlID] = {
     longURL: req.body.longURL,
-    userID: req.session.userID
+    userID: req.session.userID,
+    timesVisited: 0
   };
 
   res.redirect(`/urls/${urlID}`);
@@ -170,7 +171,8 @@ app.get('/urls/:id', (req, res) => {
   const templateVars = {
     currentUser: getCurrentUserByCookie(req),
     id: reqID,
-    longURL: urlData.longURL
+    longURL: urlData.longURL,
+    timesVisited: urlData.timesVisited
   };
 
   res.render('urls_show', templateVars);
@@ -217,10 +219,13 @@ app.delete('/urls/:id/delete', (req, res) => {
 
 // Take anybody to the longURL's page
 app.get('/u/:id', (req, res) => {
-  if (!urlDatabase[req.params.id]) {
+  const urlData = urlDatabase[req.params.id];
+
+  if (!urlData) {
     return display404ErrorMsg(res, '/urls');
   }
 
+  urlData.timesVisited += 1;
   res.redirect(urlDatabase[req.params.id].longURL);
 });
 

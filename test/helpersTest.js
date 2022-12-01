@@ -50,7 +50,12 @@ describe('#getUserByEmail()', () => {
 describe('#urlsForUser()', () => {
   it('should return object of URLs belonging to user', () => {
     const actual = urlsForUser('userRandomID', testURLs);
-    const expected = {'b2xVn2': 'http://www.lighthouselabs.ca'};
+    const expected = {
+      'b2xVn2': {
+        longURL: "http://www.lighthouselabs.ca",
+        userID: 'userRandomID'
+      },
+    };
       
     assert.deepEqual(actual, expected);
   });

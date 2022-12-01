@@ -3,15 +3,18 @@ const bcrypt = require('bcryptjs');
 const urlDatabase = {
   'b2xVn2': {
     longURL: "http://www.lighthouselabs.ca",
-    userID: 'aJ481W'
+    userID: 'aJ481W',
+    timesVisited: 0
   },
   '9sm5xK': {
     longURL: "http://www.google.com",
-    userID: 'aJ481W'
+    userID: 'aJ481W',
+    timesVisited: 0
   },
   'wQz2yQ': {
     longURL: "http://www.diamondsonneptune.com",
-    userID: 'qTSPlk'
+    userID: 'qTSPlk',
+    timesVisited: 0
   },
 };
 
