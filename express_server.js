@@ -323,16 +323,14 @@ app.post('/urls/delete/:id', (req, res) => {
 
 // Take anybody to the longURL's page
 app.get('/u/:id', (req, res) => {
-  const longURL = urlDatabase[req.params.id].longURL;
-
-  if (longURL === undefined) {
+  if (!urlDatabase[req.params.id]) {
     const errMsg = 'Page not found.';
     res.statusCode = 404;
 
     return displayErrorMsg(res, res.statusCode, errMsg, '/urls');
   }
 
-  res.redirect(longURL);
+  res.redirect(urlDatabase[req.params.id].longURL);
 });
 
 app.get('/', (req, res) => {
