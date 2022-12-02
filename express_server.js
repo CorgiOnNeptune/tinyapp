@@ -169,7 +169,7 @@ app.get('/urls/:id', (req, res) => {
   }
 
   if (!urlData || urlData === undefined) {
-    return display404ErrorMsg(res, '/urls');
+    return display404ErrorMsg(res);
   }
   
   if (!userOwnsURL(req.session.userID, reqID)) {
@@ -194,7 +194,7 @@ app.put('/urls/:id', (req, res) => {
   }
 
   if (!urlDatabase[reqID]) {
-    return display404ErrorMsg(res, '/urls');
+    return display404ErrorMsg(res);
   }
 
   if (!userOwnsURL(req.session.userID, reqID)) {
@@ -212,7 +212,7 @@ app.delete('/urls/:id/delete', (req, res) => {
   }
   
   if (!urlDatabase[req.params.id]) {
-    return display404ErrorMsg(res, '/urls');
+    return display404ErrorMsg(res);
   }
 
   if (!userOwnsURL(req.session.userID, req.params.id)) {
@@ -229,7 +229,7 @@ app.get('/u/:id', (req, res) => {
   const urlData = urlDatabase[req.params.id];
 
   if (!urlData) {
-    return display404ErrorMsg(res, '/urls');
+    return display404ErrorMsg(res);
   }
 
   urlData.uniqueVisitors = (req.session.views || 0) + 1;
