@@ -40,7 +40,10 @@
               <td><%= urls[id].longURL %></td>
               <td><%= urls[id].timesVisited %></td>
               <td><%= urls[id].uniqueVisitors %></td>
-              <td><a href="/urls/<%= id %>#url-stats">More Stats...</a></td>
+              <td>
+                <a href="/urls/<%= id %>"
+                  class="btn btn-outline-info"
+                  >More Stats...</a></td>
               <td>
                 <form 
                   class="form-inline" 
