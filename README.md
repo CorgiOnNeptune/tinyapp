@@ -10,16 +10,29 @@ Each time a user visits a link, it also creates additional stats, giving the spe
 
 &nbsp;
 ***
-&nbsp;
+
 
 ## Final Product
+!['Screenshot of URLs index page'](https://github.com/CorgiOnNeptune/tinyapp/blob/main/docs/urls-page.png?raw=true)
 
-!["screenshot description"](#)
-!["screenshot description"](#)
+&nbsp;
+<details>
+  <summary>Screenshots of URLs stat pages</summary>
+  
+  !['Screenshot of TinyURL stat page w/ no views'](https://github.com/CorgiOnNeptune/tinyapp/blob/main/docs/urls-stats-no-views.png?raw=true)
+  !['Screenshot of TinyURL stat page w/ views'](https://github.com/CorgiOnNeptune/tinyapp/blob/main/docs/urls-stats-expanded.png?raw=true)
+
+</details>
+&nbsp;
+<details>
+  <summary>Screenshots of registration page</summary>
+  
+  !['Screenshot of registration page'](https://github.com/CorgiOnNeptune/tinyapp/blob/main/docs/registration-page.png?raw=true)
+
+</details>
 
 &nbsp;
 ***
-&nbsp;
 
 ## Dependencies
 
