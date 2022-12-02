@@ -23,10 +23,27 @@
         <h5 class="card-text border-bottom" style="padding-bottom: 20px;">
           TinyURL ID: <a href="/u/<%= id %>"><%= id %></a>
         </h5>
-        <h4 class="card-title" style="padding: 10px;">TinyURL Stats</h5>
-        <p>Date created: <%= urlData.dateCreated %></p>
-        <p>Total times visited: <%= urlData.timesVisited %></p>
-        <p>Unique visitors: <%= urlData.uniqueVisitors %></p>
+        <div class="row justify-content-center">
+          <div class="col-auto">
+            <h4 class="card-title" style="padding: 15px;">TinyURL Stats</h5>
+            <table class="table d-md-table">
+              <thead>
+                <tr>
+                  <th scope="col">Date Created</th>
+                  <th scope="col">Total Times Visited</th>
+                  <th scope="col">Unique Visitors</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><%= urlData.dateCreated %></td>
+                  <td><%= urlData.timesVisited.toLocaleString('en-US') %></td>
+                  <td><%= urlData.uniqueVisitors.toLocaleString('en-US') %></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
 
       <div class="justify-content-center">
@@ -43,6 +60,7 @@
         <div class="row justify-content-center">
           <div class="col-auto collapse" id="url-stats">
             <% if (urlData.visits.length > 0) { %>
+              <h4>TinyURL Views</h4>
             <table class="table d-md-table">
               <thead>
                 <tr>

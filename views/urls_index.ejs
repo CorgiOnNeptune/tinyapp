@@ -40,8 +40,8 @@
               <td><a href="/u/<%= id %>"><%= id %></a></td>
               <td><%= urls[id].longURL %></td>
               <td><%= urls[id].dateCreated %></td>
-              <td><%= urls[id].timesVisited %></td>
-              <td><%= urls[id].uniqueVisitors %></td>
+              <td><%= urls[id].timesVisited.toLocaleString('en-US') %></td>
+              <td><%= urls[id].uniqueVisitors.toLocaleString('en-US') %></td>
               <td>
                 <a href="/urls/<%= id %>"
                   class="btn btn-outline-info"
