@@ -26,6 +26,7 @@
           <tr>
             <th scope="col">Short URL ID</th>
             <th scope="col">Long URL</th>
+            <th scope="col">Date Created</th>
             <th scope="col">Total Visits</th>
             <th scope="col">Unique Visitors</th>
             <th scope="col">Stats</th>
@@ -38,6 +39,7 @@
             <tr>
               <td><%= id %></td>
               <td><%= urls[id].longURL %></td>
+              <td><%= urls[id].dateCreated %></td>
               <td><%= urls[id].timesVisited %></td>
               <td><%= urls[id].uniqueVisitors %></td>
               <td>

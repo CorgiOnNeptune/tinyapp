@@ -95,12 +95,12 @@ const displayErrorMsg = (res, status, errMsg, returnLink) => {
 };
 
 const display404ErrorMsg = (res, errMsg = 'Page not found', returnLink = '/urls') => {
-  res.statusCode = 404;
+
   return displayErrorMsg(res, 404, errMsg, returnLink);
 };
 
 const display403ErrorMsg = (res, errMsg = 'Please login to proceed', returnLink = '/login') => {
-  res.statusCode = 403;
+  
   return displayErrorMsg(res, 403, errMsg, returnLink);
 };
 
@@ -114,6 +114,7 @@ module.exports = {
   display403ErrorMsg,
   urlsForUser,
   userOwnsURL,
+  getTimeStamp,
   trackVisit
 };
       

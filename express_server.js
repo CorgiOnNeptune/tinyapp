@@ -12,6 +12,7 @@ const {
   display403ErrorMsg,
   urlsForUser,
   userOwnsURL,
+  getTimeStamp,
   trackVisit
 } = require('./helpers');
 const { urlDatabase, userDatabase } = require('./data');
@@ -136,6 +137,7 @@ app.put('/urls', (req, res) => {
   urlDatabase[urlID] = {
     longURL: req.body.longURL,
     userID: req.session.userID,
+    dateCreated: getTimeStamp(),
     timesVisited: 0,
     uniqueVisitors: 0,
     visits: []

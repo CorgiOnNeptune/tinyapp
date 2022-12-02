@@ -24,13 +24,14 @@
           TinyURL ID: <a href="/u/<%= id %>"><%= id %></a>
         </h5>
         <h4 class="card-title" style="padding: 10px;">TinyURL Stats</h5>
+        <p>Date created: <%= urlData.dateCreated %></p>
         <p>Total times visited: <%= urlData.timesVisited %></p>
         <p>Unique visitors: <%= urlData.uniqueVisitors %></p>
       </div>
 
       <div class="justify-content-center">
         <button 
-        class="justify-content-center btn btn-info" 
+        class="btn btn-info" 
         type="button" 
         data-toggle="collapse" 
         data-target="#url-stats" 

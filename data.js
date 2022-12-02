@@ -4,6 +4,7 @@ const urlDatabase = {
   'b2xVn2': {
     longURL: "http://www.lighthouselabs.ca",
     userID: 'aJ481W',
+    dateCreated: 'Nov. 4, 2000 @ 12:00:00 AM',
     timesVisited: 0,
     uniqueVisitors: 0,
     visits: [],
@@ -11,14 +12,15 @@ const urlDatabase = {
   '9sm5xK': {
     longURL: "http://www.google.com",
     userID: 'aJ481W',
+    dateCreated: 'Jan. 6, 2020 @ 06:5:57 AM',
     timesVisited: 0,
     uniqueVisitors: 0,
     visits: [],
-
   },
   'wQz2yQ': {
     longURL: "http://www.diamondsonneptune.com",
     userID: 'qTSPlk',
+    dateCreated: 'Aug. 30, 1997 @ 12:30:00 PM',
     timesVisited: 0,
     uniqueVisitors: 0,
     visits: [],
