@@ -30,7 +30,6 @@ app.use(cookieSession({
   keys: ['secretKey', 'superSecretKey'],
 }));
 
-
 //
 // Routes
 //
@@ -133,7 +132,9 @@ app.put('/urls', (req, res) => {
   urlDatabase[urlID] = {
     longURL: req.body.longURL,
     userID: req.session.userID,
-    timesVisited: 0
+    timesVisited: 0,
+    uniqueVisitors: 0,
+    visits: []
   };
 
   res.redirect(`/urls/${urlID}`);
@@ -227,6 +228,8 @@ app.get('/u/:id', (req, res) => {
 
   urlData.uniqueVisitors = (req.session.views || 0) + 1;
   urlData.timesVisited += 1;
+  urlData.visits.push(trackVisit());
+
   res.redirect(urlDatabase[req.params.id].longURL);
 });
 

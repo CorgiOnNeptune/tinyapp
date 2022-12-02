@@ -70,6 +70,10 @@ const getTime = num => {
     timeSuffix = 'PM';
   }
 
+  if (num === 0) {
+    num = 12;
+  }
+
   return `${num}:${date.getMinutes()}:${date.getSeconds()} ${timeSuffix}`;
 };
 
