@@ -128,6 +128,10 @@ app.put('/urls', (req, res) => {
     return display403ErrorMsg(res);
   }
 
+  if (!req.body.longURL) {
+    return display404ErrorMsg(res, 'Please enter a URL', '/urls/new');
+  }
+
   // Add the new url to the urlDatabase
   urlDatabase[urlID] = {
     longURL: req.body.longURL,

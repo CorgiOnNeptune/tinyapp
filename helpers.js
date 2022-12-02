@@ -1,4 +1,7 @@
-const { userDatabase, urlDatabase } = require('./data');
+const {
+  userDatabase,
+  urlDatabase
+} = require('./data');
 
 const generateRandomString = () => {
   const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0213456789';
@@ -10,6 +13,7 @@ const generateRandomString = () => {
   return result;
 };
 
+// Function to find user data based on certain value
 const getUserByEmail = (email, database = userDatabase) => {
   for (const data in database) {
     if (database[data].email === email) {
@@ -23,23 +27,8 @@ const getCurrentUserByCookie = (req, database = userDatabase) => {
   return database[req.session.userID];
 };
 
-const displayErrorMsg = (res, status, errMsg, returnLink) => {
-  console.log(`Error ${status}: ${errMsg}`);
-  return res.send(`<h3>Error ${status}</h3>
-  <p>${errMsg}.<br/><br/>
-  <b><a href="${returnLink}">Return</a></b></p>\n`);
-};
 
-const display404ErrorMsg = (res, returnLink) => {
-  res.statusCode = 404;
-  return displayErrorMsg(res, 404, 'Page not found', returnLink);
-};
-
-const display403ErrorMsg = (res, errMsg = 'Please login to proceed', returnLink = '/login') => {
-  res.statusCode = 403;
-  return displayErrorMsg(res, 403, errMsg, returnLink);
-};
-
+// Functions to check for data of user
 const urlsForUser = (userID, database = urlDatabase) => {
   let userURLS = {};
 
@@ -61,6 +50,8 @@ const userOwnsURL = (userID, urlID, database = urlDatabase) => {
   return true;
 };
 
+
+// Functions to build link visit data
 const getTime = num => {
   const date = new Date();
   let timeSuffix = 'AM';
@@ -91,6 +82,28 @@ const trackVisit = () => {
 
   return {timestamp, visitorID};
 };
+
+
+// Functions to send user errors
+const displayErrorMsg = (res, status, errMsg, returnLink) => {
+  console.log(`Error ${status}: ${errMsg}`);
+  res.statusCode = status;
+
+  return res.send(`<h3>Error ${status}</h3>
+  <p>${errMsg}.<br/><br/>
+  <b><a href="${returnLink}">Return</a></b></p>\n`);
+};
+
+const display404ErrorMsg = (res, errMsg = 'Page not found', returnLink = '/urls') => {
+  res.statusCode = 404;
+  return displayErrorMsg(res, 404, errMsg, returnLink);
+};
+
+const display403ErrorMsg = (res, errMsg = 'Please login to proceed', returnLink = '/login') => {
+  res.statusCode = 403;
+  return displayErrorMsg(res, 403, errMsg, returnLink);
+};
+
 
 module.exports = {
   generateRandomString,
